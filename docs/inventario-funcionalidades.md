@@ -14,18 +14,18 @@ Cópia do HTML em `docs/site-atual/index.html`; logo e fotos extraídas em `docs
 
 ## Páginas e seções
 
-| Seção | Âncora | Conteúdo |
-|---|---|---|
-| Cabeçalho (fixo no desktop) | — | Logo e nome, nav (Estoque, Financiar, Vender ou trocar, Contato, **Favoritos (n)**, **Painel**), botão WhatsApp |
-| Hero | `#` | Linha de apoio "Sorocaba, SP · Carros e motos", H1 "Nacionais, importados e antigos.", texto, CTAs "Ver estoque" e "Simular financiamento", foto da fachada com o Civic |
-| Faixa de números | — | Total à venda, preço "a partir de" (menor preço), quantidade de carros e de motos. Tudo calculado a partir do estoque |
-| Estoque | `#estoque` | Contador, abas de categoria, busca, filtros, ordenação e grade de cards |
-| Financiamento | `#financiar` | 3 passos explicativos e simulador |
-| Venda ou troca | `#vender` | 3 passos e formulário de avaliação |
-| Rodapé | `#contato` | Logo, slogan, "Onde estamos: Sorocaba, SP", WhatsApp (15) 98185-7291, Instagram @kimikamotors |
-| Painel | `#admin` | Área da loja (demo, sem login) |
-| Modais | — | Detalhe do veículo, Comparar, Favoritos |
-| Barra de comparação | — | Fixa no rodapé quando há veículos selecionados |
+| Seção                       | Âncora       | Conteúdo                                                                                                                                                                |
+| --------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cabeçalho (fixo no desktop) | —            | Logo e nome, nav (Estoque, Financiar, Vender ou trocar, Contato, **Favoritos (n)**, **Painel**), botão WhatsApp                                                         |
+| Hero                        | `#`          | Linha de apoio "Sorocaba, SP · Carros e motos", H1 "Nacionais, importados e antigos.", texto, CTAs "Ver estoque" e "Simular financiamento", foto da fachada com o Civic |
+| Faixa de números            | —            | Total à venda, preço "a partir de" (menor preço), quantidade de carros e de motos. Tudo calculado a partir do estoque                                                   |
+| Estoque                     | `#estoque`   | Contador, abas de categoria, busca, filtros, ordenação e grade de cards                                                                                                 |
+| Financiamento               | `#financiar` | 3 passos explicativos e simulador                                                                                                                                       |
+| Venda ou troca              | `#vender`    | 3 passos e formulário de avaliação                                                                                                                                      |
+| Rodapé                      | `#contato`   | Logo, slogan, "Onde estamos: Sorocaba, SP", WhatsApp (15) 98185-7291, Instagram @kimikamotors                                                                           |
+| Painel                      | `#admin`     | Área da loja (demo, sem login)                                                                                                                                          |
+| Modais                      | —            | Detalhe do veículo, Comparar, Favoritos                                                                                                                                 |
+| Barra de comparação         | —            | Fixa no rodapé quando há veículos selecionados                                                                                                                          |
 
 ## Estoque: busca, filtros e ordenação
 
@@ -123,21 +123,21 @@ Cópia do HTML em `docs/site-atual/index.html`; logo e fotos extraídas em `docs
 
 ## Dados de cada veículo
 
-| Campo | Tipo | Observação |
-|---|---|---|
-| `id` | número | Também define a ordem "mais recentes" |
-| `fk` | string | Chave da foto |
-| `marca`, `modelo`, `ver` | string | `ver` pode vir vazio |
-| `ano` | número | |
-| `km` | número \| null | 6 de 12 sem km |
-| `preco` | número \| null | 2 sem preço ("Consulte") |
-| `cambio` | "Manual" \| "Automático" \| null | |
-| `comb` | string \| null | **Todos null hoje** |
-| `body` | Hatch \| Sedan \| SUV \| Minivan \| Perua \| Moto | Moto define a categoria |
-| `st` | Disponível \| Reservado \| Vendido | |
-| `imp` | 0/1 | Importado |
-| `cor` | hex | Só para a ilustração |
-| `itens` | string[] | Opcionais |
+| Campo                    | Tipo                                              | Observação                            |
+| ------------------------ | ------------------------------------------------- | ------------------------------------- |
+| `id`                     | número                                            | Também define a ordem "mais recentes" |
+| `fk`                     | string                                            | Chave da foto                         |
+| `marca`, `modelo`, `ver` | string                                            | `ver` pode vir vazio                  |
+| `ano`                    | número                                            |                                       |
+| `km`                     | número \| null                                    | 6 de 12 sem km                        |
+| `preco`                  | número \| null                                    | 2 sem preço ("Consulte")              |
+| `cambio`                 | "Manual" \| "Automático" \| null                  |                                       |
+| `comb`                   | string \| null                                    | **Todos null hoje**                   |
+| `body`                   | Hatch \| Sedan \| SUV \| Minivan \| Perua \| Moto | Moto define a categoria               |
+| `st`                     | Disponível \| Reservado \| Vendido                |                                       |
+| `imp`                    | 0/1                                               | Importado                             |
+| `cor`                    | hex                                               | Só para a ilustração                  |
+| `itens`                  | string[]                                          | Opcionais                             |
 
 Estoque atual: 12 veículos (11 carros e 1 moto, a Yamaha Nmax). Todos disponíveis, sem importados nem antigos.
 

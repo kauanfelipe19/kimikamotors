@@ -15,19 +15,19 @@ Não existe versão horizontal, monocromática ou vetorial (SVG). Também não e
 
 ## Cores (tokens do CSS atual)
 
-| Token | Hex | Uso |
-|---|---|---|
-| `--bg` | `#0B0B0C` | Fundo geral (preto da logo) |
-| `--s1` | `#121213` | Superfície 1 |
-| `--s2` | `#19191B` | Superfície 2 / fundo das ilustrações |
-| `--line` | `#2B2B2F` | Linhas finas e bordas |
-| `--ink` | `#F3EFE8` | Texto principal (off-white quente) |
-| `--muted` | `#9A958C` | Texto secundário (≈ 6,6:1 sobre o fundo, passa no AA) |
-| `--accent` | `#F28A24` | Laranja da logo, usado em ação e destaque |
-| `--accent-ink` | `#140B02` | Texto sobre o laranja |
-| hover primário | `#FFA042` | |
-| `--bad` | `#E5736F` | Erro |
-| `--warn` | `#F2B35E` | Aviso |
+| Token          | Hex       | Uso                                                   |
+| -------------- | --------- | ----------------------------------------------------- |
+| `--bg`         | `#0B0B0C` | Fundo geral (preto da logo)                           |
+| `--s1`         | `#121213` | Superfície 1                                          |
+| `--s2`         | `#19191B` | Superfície 2 / fundo das ilustrações                  |
+| `--line`       | `#2B2B2F` | Linhas finas e bordas                                 |
+| `--ink`        | `#F3EFE8` | Texto principal (off-white quente)                    |
+| `--muted`      | `#9A958C` | Texto secundário (≈ 6,6:1 sobre o fundo, passa no AA) |
+| `--accent`     | `#F28A24` | Laranja da logo, usado em ação e destaque             |
+| `--accent-ink` | `#140B02` | Texto sobre o laranja                                 |
+| hover primário | `#FFA042` |                                                       |
+| `--bad`        | `#E5736F` | Erro                                                  |
+| `--warn`       | `#F2B35E` | Aviso                                                 |
 
 Não há token de **sucesso**. O tema é só escuro (`color-scheme: dark`).
 
