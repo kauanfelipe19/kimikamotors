@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /design
+Disallow: /painel
+
+Sitemap: https://kimikamotors.vercel.app/sitemap.xml
