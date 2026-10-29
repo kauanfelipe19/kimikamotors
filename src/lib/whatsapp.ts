@@ -21,4 +21,14 @@ export const mensagens = {
     parcela: number;
   }) =>
     `Olá! Fiz uma simulação no site: ${s.rotulo ?? `veículo de ${formatarPreco(s.valor)}`}, entrada de ${formatarPreco(s.entrada)}, ${s.prazo}x de cerca de ${formatarPreco(s.parcela)}. Podem me ajudar?`,
+  avaliacao: (a: {
+    nome: string;
+    objetivo: string;
+    modelo: string;
+    ano: string;
+    km: string;
+    obs: string;
+    whatsapp: string;
+  }) =>
+    `Olá! Me chamo ${a.nome} e quero ${a.objetivo.toLowerCase()}. Veículo: ${a.modelo}, ano ${a.ano}${a.km ? `, ${a.km} km` : ''}. ${a.obs ? `Observações: ${a.obs}. ` : ''}Meu WhatsApp: ${a.whatsapp}.`,
 } as const;

@@ -106,3 +106,25 @@ O conteúdo é o mesmo do modal atual:
 - **JSON-LD:** `Car`, ou `Motorcycle` para motos, com marca, modelo, ano, km, câmbio, carroceria e condição de usado.
 - **Oferta:** o `Offer` (preço em BRL e loja `AutoDealer` em Sorocaba-SP) só entra quando há preço. Veículo reservado vira `LimitedAvailability`.
 - **Meta:** o título é "Marca Modelo Versão Ano". A descrição é gerada a partir dos dados, a imagem de compartilhamento é a foto do veículo e a página tem `canonical`.
+
+## Etapa 3: Financiar e Vender ou trocar (28/10/2026)
+
+### Financiar (`/financiamento`)
+
+- **Conteúdo:** os mesmos textos e passos da seção atual, com o `Simulador` e o valor editável (padrão R$ 59.900).
+- **Mensagem do WhatsApp:** cita "veículo de R$ X", como hoje.
+
+### Vender ou trocar (`/vender`)
+
+- **Mantido do site atual:**
+  - campos, textos de exemplo e campos obrigatórios (nome, WhatsApp, marca e modelo, ano);
+  - regra do telefone com pelo menos 10 dígitos;
+  - mensagem do WhatsApp idêntica.
+  - Nada é enviado a servidor: o botão só monta o link.
+- **Erros por campo:** antes havia uma frase única no topo ("Preencha nome, WhatsApp, marca e modelo e o ano."). Agora cada campo mostra o próprio erro, ligado por `aria-describedby` e com `aria-invalid`, e o foco vai para o primeiro campo errado. A regra é a mesma, só a apresentação ficou mais acessível.
+- **Texto de protótipo trocado:** "Neste protótipo nenhum dado é enviado. No site final ele vai para o painel..." virou uma instrução para tocar no botão e abrir o WhatsApp.
+- **Confirmação:** a caixa "Pedido montado." recebe o foco, para leitores de tela anunciarem.
+
+### Botões
+
+- **Texto centralizado:** quando o texto quebra em duas linhas no celular, ele fica centralizado.

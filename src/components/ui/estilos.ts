@@ -31,7 +31,7 @@ export function classesBotao({
   larguraTotal,
 }: EstiloBotao = {}) {
   return cn(
-    'inline-flex select-none items-center justify-center rounded-md font-semibold no-underline',
+    'inline-flex select-none items-center justify-center rounded-md text-center font-semibold no-underline',
     'transition-[background-color,border-color,box-shadow,color,transform] duration-200 ease-suave',
     'active:translate-y-px disabled:pointer-events-none disabled:opacity-40',
     '[&_svg]:size-[1.15em] [&_svg]:shrink-0',
