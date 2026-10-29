@@ -35,3 +35,23 @@ Detalhes pequenos decididos durante o trabalho. Qualquer um pode ser revisto.
 - **Origem:** extraídas do HTML atual (800×800) e convertidas para AVIF e WebP em 400 e 800 px por `npm run imagens`.
 - **Recorte:** cada foto tem um `foco` (object-position) próprio. A da moto Nmax usa `50% 85%`.
 - **Logo:** só existe em 240×240 PNG. Os ícones e o favicon saem dela.
+
+## Etapa 3: Home (28/10/2026)
+
+### Estrutura
+
+- **Páginas próprias:** o estoque, o simulador e o formulário de avaliação saem da Home e ganham páginas (`/estoque`, `/financiamento`, `/vender`), cada uma com título e descrição para o Google. A Home fica mais leve e mostra uma prévia de cada um: os 6 veículos mais recentes, um exemplo de parcela e os passos da avaliação, sempre com botão para a página completa.
+- **Contato:** o rodapé (`#contato`) aparece em todas as páginas, então o link "Contato" do menu funciona em qualquer uma.
+- **Pular para o conteúdo:** adicionado um link que só aparece ao navegar pelo teclado.
+
+### Cabeçalho e menu
+
+- **Painel:** sai do menu.
+- **Celular:** abaixo de 1024 px, o menu vira um botão que abre a lista. No site atual era uma faixa com rolagem lateral. O cabeçalho fica fixo também no celular, e um ponto laranja no botão indica que há favoritos.
+- **Favoritos:** a lista abre num `<dialog>` nativo, que prende o foco, fecha com Esc ou clicando fora e devolve o foco a quem abriu. Isso corrige a falta de focus trap do modal atual. Os favoritos continuam só em memória.
+
+### Hero e rodapé
+
+- **Legenda do hero:** se o Civic estiver à venda, mostra "Em destaque", com o preço e o link para o detalhe. Se não estiver, mostra "Kímika Motors · Sorocaba-SP", como hoje. No celular, a legenda fica abaixo da foto para não cobrir o carro.
+- **WhatsApp no rodapé:** o número virou link, com a mesma mensagem do cabeçalho.
+- **Instagram:** continua como texto. A sugestão de torná-lo clicável está em `docs/sugestoes.md`.
