@@ -2,8 +2,6 @@ import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigationType } from 'react-router-dom';
 import { BarraComparacao, ModalComparacao } from '@/components/vehicle/Comparacao';
 import { useComparacao } from '@/context/comparacao';
-import { ComparacaoProvider } from '@/context/ComparacaoProvider';
-import { FavoritosProvider } from '@/context/FavoritosProvider';
 import { cn } from '@/lib/cn';
 import { FavoritosDialog } from './FavoritosDialog';
 import { Footer } from './Footer';
@@ -11,16 +9,6 @@ import { Header } from './Header';
 
 /** Estrutura comum das páginas públicas: cabeçalho, conteúdo, rodapé, favoritos e comparação. */
 export function SiteLayout() {
-  return (
-    <FavoritosProvider>
-      <ComparacaoProvider>
-        <Estrutura />
-      </ComparacaoProvider>
-    </FavoritosProvider>
-  );
-}
-
-function Estrutura() {
   const [favoritosAberto, setFavoritosAberto] = useState(false);
   const { ids, aviso, fechar: fecharComparacao } = useComparacao();
   const comBarra = ids.length > 0 || aviso !== null;

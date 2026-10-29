@@ -18,7 +18,7 @@ Itens que o site atual **não tem** ou que funcionam mal. Nenhum deles será imp
 - Fazer "Remover filtros" resetar também a ordenação.
 - Dar a cada veículo uma **página própria com URL amigável** (`/estoque/renault-duster-dynamique-2014`). Isso permite compartilhar o link e melhora o SEO.
 - **Painel real:** login e banco (por exemplo Supabase), upload de fotos pelo celular e alterações visíveis para todos.
-- Esconder o link "Painel" do menu público.
+- ~~Esconder o link "Painel" do menu público.~~ Feito na Etapa 3 (aprovado junto com a rota `/painel`).
 - Tornar o Instagram clicável.
 - Remover os textos de protótipo visíveis ao cliente.
 - Adicionar favicon, `lang="pt-BR"`, meta description, Open Graph, `sitemap.xml`, `robots.txt` e JSON-LD.

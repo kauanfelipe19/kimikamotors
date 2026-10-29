@@ -128,3 +128,35 @@ O conteúdo é o mesmo do modal atual:
 ### Botões
 
 - **Texto centralizado:** quando o texto quebra em duas linhas no celular, ele fica centralizado.
+
+## Etapa 3: Painel e sitemap (28/10/2026)
+
+### Painel (`/painel`)
+
+- **Continua demonstração, sem login.** Fica fora do menu público, com `noindex` e `Disallow` no `robots.txt`. O aviso de demonstração foi mantido e ganhou a frase "Por enquanto, elas valem só neste navegador."
+- **Igual ao site atual:**
+  - indicadores Disponíveis, Reservados, Vendidos e Valor em estoque (soma do que não foi vendido);
+  - tabela por id decrescente, com select de situação;
+  - "Excluir" pede um segundo clique em "Confirmar";
+  - "Novo veículo" com os mesmos campos e regras;
+  - o campo de fotos é ignorado e o veículo novo entra com a ilustração numa cor da mesma paleta.
+- **Efeito na loja:** "Vendido" tira o veículo da loja e o link dele passa a dar 404. "Reservado" mostra o selo. Excluir também tira o veículo dos favoritos e da comparação.
+- **Mudanças:**
+  - os erros do formulário aparecem por campo, como em `/vender`;
+  - o limite do ano passa a ser "ano atual + 1" (hoje, 2027, o mesmo valor);
+  - depois de publicar, aparece um link para a página do veículo novo.
+
+### Dados no navegador
+
+- **Nova chave:** as alterações ficam no `localStorage`, com a chave nova `kimika-painel-v5`. O formato dos dados mudou (slug, fotos, nomes dos campos), então a chave antiga `kimika-proto-v4` é ignorada: só tinha dados de teste do protótipo, no navegador de quem usou o painel.
+- **Serviço:** a camada `src/services/veiculos.ts` ganhou `alterarSituacao`, `excluirVeiculo`, `adicionarVeiculo` e um aviso de mudança (`assinarMudancas`). Assim as páginas abertas se atualizam na hora. Para trocar por Supabase, basta reimplementar essas funções.
+- **Favoritos e comparação:** os providers subiram para o `App`, acima das rotas, para não se perderem ao ir ao painel e voltar, como no site atual.
+
+### Sitemap
+
+- **Geração:** um plugin no `vite.config.ts` gera o `dist/sitemap.xml` no build.
+- **Conteúdo:**
+  - as 4 páginas públicas;
+  - um endereço por veículo do arquivo local que não esteja vendido.
+- **Fora do sitemap:** veículos criados no painel de demonstração, que só existem no navegador de quem criou.
+- **Endereço do site:** vem de `VITE_SITE_URL`.
