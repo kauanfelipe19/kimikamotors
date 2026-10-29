@@ -35,7 +35,8 @@ export function SiteLayout() {
         <Header onAbrirFavoritos={() => setFavoritosAberto(true)} />
         <main id="conteudo" className="flex-1">
           {/* Suspense aqui dentro: ao carregar uma página nova, cabeçalho e rodapé ficam */}
-          <Suspense fallback={<div className="min-h-[60vh]" />}>
+          {/* Altura de tela cheia: o rodapé não aparece e depois "pula" quando a página chega */}
+          <Suspense fallback={<div className="min-h-dvh" />}>
             <Outlet />
           </Suspense>
         </main>

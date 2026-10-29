@@ -31,12 +31,37 @@ function sitemap(siteUrl: string): Plugin {
   };
 }
 
+/**
+ * Pré-carrega as fontes latinas usadas acima da dobra. Sem isso o título do hero aparece
+ * primeiro numa fonte de reserva mais larga e "encolhe" quando a Saira chega (CLS).
+ */
+function preloadFontes(): Plugin {
+  const padroes = [/saira-latin-wdth-normal-.*\.woff2$/, /manrope-latin-wght-normal-.*\.woff2$/];
+  return {
+    name: 'kimika-preload-fontes',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(_html, ctx) {
+        const arquivos = Object.keys(ctx.bundle ?? {}).filter((f) =>
+          padroes.some((p) => p.test(f)),
+        );
+        return arquivos.map((f) => ({
+          tag: 'link',
+          attrs: { rel: 'preload', as: 'font', type: 'font/woff2', href: `/${f}`, crossorigin: '' },
+          injectTo: 'head-prepend' as const,
+        }));
+      },
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
   const siteUrl = env.VITE_SITE_URL || 'https://kimikamotors.vercel.app';
 
   return {
-    plugins: [react(), sitemap(siteUrl)],
+    plugins: [react(), sitemap(siteUrl), preloadFontes()],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

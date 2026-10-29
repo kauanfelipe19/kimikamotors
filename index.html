@@ -9,6 +9,22 @@
       content="Compra e venda de carros e motos nacionais, importados e antigos em Sorocaba-SP. Veja o estoque, simule o financiamento e fale direto no WhatsApp."
     />
     <meta name="theme-color" content="#0B0B0C" />
+    <script>
+      // Na Home, a foto do hero é o maior elemento da tela (LCP): começa a baixar antes do JS
+      if (location.pathname === '/') {
+        const l = document.createElement('link');
+        l.rel = 'preload';
+        l.as = 'image';
+        l.type = 'image/avif';
+        l.setAttribute(
+          'imagesrcset',
+          '/img/veiculos/civic-400.avif 400w, /img/veiculos/civic-800.avif 800w',
+        );
+        l.setAttribute('imagesizes', '(min-width: 1024px) 560px, 100vw');
+        l.fetchPriority = 'high';
+        document.head.appendChild(l);
+      }
+    </script>
     <link rel="icon" type="image/png" sizes="32x32" href="/img/marca/logo-32.png" />
     <link rel="apple-touch-icon" href="/img/marca/logo-180.png" />
     <meta property="og:type" content="website" />

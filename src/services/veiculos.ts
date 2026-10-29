@@ -43,8 +43,21 @@ export function assinarMudancas(avisar: () => void): () => void {
 }
 
 export async function listarVeiculos(): Promise<Veiculo[]> {
+  return lerAgora();
+}
+
+function lerAgora(): Veiculo[] {
   memoria ??= lerSalvos() ?? veiculosIniciais;
   return memoria;
+}
+
+/**
+ * A lista já disponível sem esperar, ou `null`. Com dados locais sempre há lista,
+ * o que deixa a primeira pintura completa (sem skeleton nem deslocamento de layout).
+ * Numa API remota, esta função deve devolver `null` (ou um cache).
+ */
+export function veiculosSemEsperar(): Veiculo[] | null {
+  return lerAgora();
 }
 
 /** Veículos que aparecem na loja (vendidos ficam de fora). */

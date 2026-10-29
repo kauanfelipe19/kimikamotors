@@ -3,9 +3,10 @@ import { Route, Routes } from 'react-router-dom';
 import { SiteLayout } from './components/layout/SiteLayout';
 import { ComparacaoProvider } from './context/ComparacaoProvider';
 import { FavoritosProvider } from './context/FavoritosProvider';
+// A Home vai no pacote principal: é a página de entrada e assim não espera um segundo download
+import Home from './pages/Home';
 
 // Code-splitting por rota
-const Home = lazy(() => import('./pages/Home'));
 const Estoque = lazy(() => import('./pages/Estoque'));
 const Detalhe = lazy(() => import('./pages/Detalhe'));
 const Financiamento = lazy(() => import('./pages/Financiamento'));
