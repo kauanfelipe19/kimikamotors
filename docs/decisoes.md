@@ -55,3 +55,22 @@ Detalhes pequenos decididos durante o trabalho. Qualquer um pode ser revisto.
 - **Legenda do hero:** se o Civic estiver à venda, mostra "Em destaque", com o preço e o link para o detalhe. Se não estiver, mostra "Kímika Motors · Sorocaba-SP", como hoje. No celular, a legenda fica abaixo da foto para não cobrir o carro.
 - **WhatsApp no rodapé:** o número virou link, com a mesma mensagem do cabeçalho.
 - **Instagram:** continua como texto. A sugestão de torná-lo clicável está em `docs/sugestoes.md`.
+
+## Etapa 3: Estoque (28/10/2026)
+
+### Regras mantidas
+
+Abas, busca, filtros, ordenação, "Remover filtros" (limpa filtros, aba e busca, mas mantém a ordenação), mensagem de lista vazia, aviso sobre os dados do Instagram e o limite de 2 a 3 veículos na comparação: tudo igual ao site atual. A lógica fica em `src/lib/estoque.ts`.
+
+### Estado em memória
+
+- **Filtros e ordenação:** continuam só em memória, mas agora sobrevivem à troca de página (`useEstadoDaSessao`). Como o detalhe virou página, sem isso abrir um carro e voltar zeraria os filtros, coisa que o modal de hoje não fazia. Recarregar ainda zera tudo, como hoje.
+- **Rolagem:** ao voltar do detalhe para o estoque, a página volta à mesma posição. Uma página nova começa do topo, e âncoras como `#contato` continuam funcionando.
+- **Comparação:** a seleção também fica em memória. A barra laranja aparece em todas as páginas públicas, como hoje (só some no painel). Os modais fecham sozinhos quando um link leva a outra página.
+
+### Layout
+
+- **Filtros:** no desktop (≥ 1024 px) ficam numa coluna lateral, sempre visíveis. Abaixo disso, o botão "Filtros"/"Fechar filtros" (`aria-expanded`) abre o painel, como hoje.
+- **Ordenar:** fica acima da grade, ao lado do contador, e não junto dos filtros.
+- **Tabela de comparação:** ganhou a foto de cada veículo, com link para o detalhe. No celular a tabela rola de lado com a coluna de rótulos fixa.
+- **Carregamento:** o `Suspense` das páginas fica dentro do layout, para o cabeçalho e o rodapé não piscarem.
