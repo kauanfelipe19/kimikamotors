@@ -1,4 +1,5 @@
 import { cn } from '@/lib/cn';
+import { srcsetFoto, urlFoto } from '@/lib/fotos';
 import { ehMoto, nomeCurto } from '@/lib/veiculo';
 import type { Veiculo } from '@/types/veiculo';
 
@@ -12,11 +13,10 @@ interface VehiclePhotoProps {
   className?: string;
 }
 
-const LARGURAS = [400, 800];
-const srcset = (arquivo: string, ext: string) =>
-  LARGURAS.map((w) => `/img/veiculos/${arquivo}-${w}.${ext} ${w}w`).join(', ');
-
-/** Foto otimizada (AVIF/WebP) ou, se o veículo não tiver foto, a ilustração do site atual. */
+/**
+ * Foto otimizada ou, se o veículo não tiver foto, a ilustração do site atual.
+ * Fotos locais têm AVIF + WebP; as enviadas pelo painel, só WebP (ou JPEG).
+ */
 export function VehiclePhoto({
   veiculo,
   indice = 0,
@@ -27,12 +27,16 @@ export function VehiclePhoto({
   const foto = veiculo.fotos[indice];
   if (!foto) return <VehicleIllustration veiculo={veiculo} className={className} />;
 
+  const local = foto.origem !== 'storage';
+
   return (
     <picture>
-      <source type="image/avif" srcSet={srcset(foto.arquivo, 'avif')} sizes={sizes} />
-      <source type="image/webp" srcSet={srcset(foto.arquivo, 'webp')} sizes={sizes} />
+      {local && <source type="image/avif" srcSet={srcsetFoto(foto, 'avif')} sizes={sizes} />}
+      {local && <source type="image/webp" srcSet={srcsetFoto(foto, 'webp')} sizes={sizes} />}
       <img
-        src={`/img/veiculos/${foto.arquivo}-800.webp`}
+        src={urlFoto(foto, 800)}
+        srcSet={local ? undefined : srcsetFoto(foto)}
+        sizes={local ? undefined : sizes}
         alt={foto.alt}
         width={800}
         height={800}

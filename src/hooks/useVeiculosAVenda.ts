@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  assinarMudancas,
-  listarVeiculos,
-  listarVeiculosAVenda,
-  veiculosSemEsperar,
-} from '@/services/veiculos';
+import { assinarMudancas, listarVeiculosAVenda, veiculosSemEsperar } from '@/services/veiculos';
 import type { Veiculo } from '@/types/veiculo';
 
 const aVenda = (lista: Veiculo[]) => lista.filter((v) => v.situacao !== 'Vendido');
@@ -38,6 +33,3 @@ function useLista(
 
 /** Veículos à venda. `null` enquanto carrega. */
 export const useVeiculosAVenda = () => useLista(listarVeiculosAVenda, aVenda);
-
-/** Todos os veículos, inclusive vendidos (painel). `null` enquanto carrega. */
-export const useTodosVeiculos = () => useLista(listarVeiculos, (lista) => lista);

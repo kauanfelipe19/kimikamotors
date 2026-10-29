@@ -4,8 +4,15 @@ export type Carroceria = 'Hatch' | 'Sedan' | 'SUV' | 'Minivan' | 'Perua' | 'Moto
 export type Situacao = 'Disponível' | 'Reservado' | 'Vendido';
 
 export interface FotoVeiculo {
-  /** Nome base do arquivo em public/img/veiculos (sem tamanho nem extensão) */
+  /**
+   * Nome base do arquivo, sem tamanho nem extensão. Fotos locais ficam em
+   * public/img/veiculos; fotos enviadas pelo painel, no Storage do Supabase.
+   */
   arquivo: string;
+  /** 'storage' para fotos enviadas pelo painel (só WebP ou JPEG); local se ausente */
+  origem?: 'storage';
+  /** Extensão das fotos do Storage */
+  ext?: 'webp' | 'jpg';
   alt: string;
   /** Ponto focal do recorte (CSS object-position) */
   foco?: string;

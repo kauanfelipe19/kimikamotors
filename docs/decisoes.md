@@ -160,3 +160,34 @@ O conteúdo é o mesmo do modal atual:
   - um endereço por veículo do arquivo local que não esteja vendido.
 - **Fora do sitemap:** veículos criados no painel de demonstração, que só existem no navegador de quem criou.
 - **Endereço do site:** vem de `VITE_SITE_URL`.
+
+## Supabase: painel de verdade (28/10/2026)
+
+Pedido do usuário depois da entrega: a loja precisa cadastrar carros sem mexer em código.
+
+### Banco e segurança
+
+- **Banco:** tabela `veiculos` no Supabase, com os mesmos campos do tipo `Veiculo`.
+- **Leitura:** qualquer pessoa lê o que não está vendido.
+- **Escrita:** só e-mails da tabela `admins`, conferidos pela função `eh_admin()` nas regras de RLS. Estar logado não basta, então um cadastro aberto por engano não dá acesso.
+- **Fotos:** ficam no bucket público `veiculos` (até 5 MB, só imagens). Só a loja envia ou apaga.
+- **Chaves:** a URL e a chave **publicável** ficam no `.env`. A chave secreta nunca entra no projeto.
+
+### Fotos e desempenho
+
+- **Fotos enviadas pelo painel:** o navegador reduz para 400 e 800 px em WebP (JPEG se o navegador não gerar WebP) antes do envio. O plano grátis do Supabase não redimensiona imagens.
+- **Fotos atuais:** continuam em `public/img/veiculos` (AVIF + WebP), referenciadas pelo campo `fotos`.
+- **Leitura pública:** é um `fetch` direto na API REST. A biblioteca do Supabase (60 KB gzip) só carrega em `/painel`, então o site público não ficou mais pesado.
+- **Primeira pintura:** a última lista vista fica guardada no navegador. Assim, nas visitas seguintes, a primeira pintura já vem com os carros, e a lista é atualizada logo depois.
+- **Falha do banco:** se o banco não responder, o site mostra a última lista guardada ou o arquivo local, em vez de ficar vazio.
+
+### Painel
+
+- **Login:** por e-mail e senha.
+- **Novidades em relação ao site antigo:** **editar** (dados, itens e fotos, com a primeira como capa) e o campo **Itens**.
+- **Sem Supabase no `.env`:** o painel volta a ser a demonstração do site antigo.
+
+### Sitemap
+
+- **Fonte:** no build, lê os slugs à venda do banco. Se o banco falhar, usa o arquivo local.
+- **Veículos novos:** entram no sitemap no próximo deploy.

@@ -1,5 +1,6 @@
 import type { Veiculo } from '@/types/veiculo';
 import { config } from './config';
+import { urlFoto } from './fotos';
 import { nomeCompleto } from './veiculo';
 
 /** Dados estruturados schema.org/Car (ou Motorcycle) para o detalhe do veículo. */
@@ -12,7 +13,7 @@ export function jsonLdVeiculo(v: Veiculo): Record<string, unknown> {
     '@type': v.carroceria === 'Moto' ? 'Motorcycle' : 'Car',
     name: `${nomeCompleto(v)} ${v.ano}`,
     url,
-    ...(foto && { image: new URL(`/img/veiculos/${foto.arquivo}-800.webp`, config.siteUrl).href }),
+    ...(foto && { image: new URL(urlFoto(foto, 800), config.siteUrl).href }),
     brand: { '@type': 'Brand', name: v.marca },
     model: v.modelo,
     vehicleModelDate: String(v.ano),

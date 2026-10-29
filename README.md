@@ -2,7 +2,7 @@
 
 Site da Kímika Motors, loja de carros e motos (nacionais, importados e antigos) em Sorocaba, SP.
 
-Feito com Vite, React, TypeScript, Tailwind CSS e React Router. Os dados dos veículos ficam num arquivo do próprio projeto e passam por uma camada de serviço que pode ser trocada por um banco (Supabase, por exemplo) sem mexer nas páginas.
+Feito com Vite, React, TypeScript, Tailwind CSS e React Router. Os veículos ficam no **Supabase** (banco, login do painel e fotos). Sem Supabase configurado, o site usa o arquivo `src/data/veiculos.ts` e o painel vira uma demonstração.
 
 ## Páginas
 
@@ -13,7 +13,7 @@ Feito com Vite, React, TypeScript, Tailwind CSS e React Router. Os dados dos ve�
 | `/estoque/:slug` | Detalhe do veículo, com ficha, itens, WhatsApp e simulador                       |
 | `/financiamento` | Simulador de parcela (tabela Price)                                              |
 | `/vender`        | Pedido de avaliação para vender ou trocar                                        |
-| `/painel`        | Painel da loja, **em modo demonstração** (sem login, salva só no navegador)      |
+| `/painel`        | Painel da loja: login, cadastro com fotos, edição, situação e exclusão           |
 | `/design`        | Guia de estilo (paleta, tipografia e componentes), fora do Google                |
 
 ## Como rodar
@@ -32,12 +32,16 @@ O site abre em http://localhost:5173.
 
 ### Variáveis de ambiente
 
-Copie `.env.example` para `.env` e ajuste, se precisar. Nenhuma é obrigatória, e as duas têm valor padrão.
+Copie `.env.example` para `.env` e preencha. Na Vercel, cadastre as mesmas variáveis em **Settings → Environment Variables**.
 
-| Variável               | Para quê                                              | Padrão                            |
-| ---------------------- | ----------------------------------------------------- | --------------------------------- |
-| `VITE_SITE_URL`        | Endereço público (canonical, Open Graph, sitemap)     | `https://kimikamotors.vercel.app` |
-| `VITE_WHATSAPP_NUMERO` | Número do WhatsApp da loja, com DDI e DDD, só dígitos | `5515981857291`                   |
+| Variável                        | Para quê                                              | Padrão                            |
+| ------------------------------- | ----------------------------------------------------- | --------------------------------- |
+| `VITE_SITE_URL`                 | Endereço público (canonical, Open Graph, sitemap)     | `https://kimikamotors.vercel.app` |
+| `VITE_WHATSAPP_NUMERO`          | Número do WhatsApp da loja, com DDI e DDD, só dígitos | `5515981857291`                   |
+| `VITE_SUPABASE_URL`             | URL do projeto Supabase                               | vazio (usa o arquivo local)       |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Chave pública (`sb_publishable_...`) do projeto       | vazio (usa o arquivo local)       |
+
+A chave pública pode ir para o site: quem protege os dados são as regras do banco. **Nunca** use a chave secreta (`sb_secret_...`) aqui.
 
 ## Build e publicação
 
@@ -63,9 +67,37 @@ A publicação foi pensada para a **Vercel**. O `vercel.json` manda qualquer end
 | `npm run format:check` | Só confere a formatação                            |
 | `npm run imagens`      | Gera as versões otimizadas das fotos (veja abaixo) |
 
+## Supabase: configuração inicial (uma vez)
+
+1. No painel do Supabase, abra **SQL Editor → New query**, cole o conteúdo de [`supabase/schema.sql`](supabase/schema.sql) e clique em **Run**. Isso cria:
+   - a tabela de veículos;
+   - as regras de segurança: qualquer um vê o que está à venda, só a loja altera;
+   - o espaço das fotos.
+2. Numa nova query, cole [`supabase/carga-inicial.sql`](supabase/carga-inicial.sql) e rode. Ela traz os 12 veículos do site antigo.
+3. Em **Authentication → Users → Add user → Create new user**, crie o login da loja (e-mail e senha) e marque **Auto Confirm User**.
+4. No **SQL Editor**, libere esse e-mail para o painel:
+   ```sql
+   insert into public.admins (email) values ('email-da-loja@exemplo.com');
+   ```
+5. Recomendado: em **Authentication → Sign In / Providers**, desligue **Allow new users to sign up**. Mesmo ligado, só quem está em `admins` consegue alterar o estoque.
+
+Para dar acesso a mais alguém da loja, repita os passos 3 e 4 com o e-mail da pessoa.
+
 ## Como cadastrar um veículo
 
-Hoje o estoque fica no arquivo `src/data/veiculos.ts`. O painel em `/painel` é só uma demonstração: o que se faz nele vale apenas no navegador de quem usou.
+Entre em `/painel` com o login da loja e preencha **Novo veículo**. Funciona pelo celular, e as fotos podem ser tiradas na hora. Elas são reduzidas no próprio aparelho (400 e 800 px, WebP) antes de subir. O veículo aparece na hora no estoque, na Home (entre os 6 mais recentes) e com página própria.
+
+No painel também dá para:
+
+- mudar a situação. **Reservado** mostra o selo; **Vendido** tira o veículo da loja;
+- editar dados, itens e fotos. A primeira foto é a capa;
+- excluir, com confirmação. As fotos saem junto.
+
+O `sitemap.xml` é montado no build, com os veículos do banco. Os carros novos entram no sitemap no próximo deploy, mas aparecem no site na hora.
+
+## Sem Supabase (arquivo local)
+
+Sem as variáveis do Supabase, o estoque vem de `src/data/veiculos.ts` e o painel vira uma demonstração: o que se faz nele vale só no navegador de quem usou. Para cadastrar por código nesse modo:
 
 ### 1. Prepare a foto
 
@@ -109,9 +141,7 @@ Copie um item existente e ajuste:
 
 Depois, rode `npm run build` (ou publique) e o veículo aparece no estoque, na Home, no sitemap e com página própria.
 
-### Para um painel de verdade
-
-Para a loja cadastrar pelo celular, sem mexer em código, é preciso um banco e login. Basta reimplementar as funções de `src/services/veiculos.ts` (`listarVeiculos`, `alterarSituacao`, `adicionarVeiculo` etc.) usando, por exemplo, o Supabase. As páginas não precisam mudar. Os detalhes estão em `docs/sugestoes.md`.
+Se mudar este arquivo e quiser levar as mudanças para o banco, `node scripts/gerar-sql-carga.mjs` gera de novo o `supabase/carga-inicial.sql`.
 
 ## Estrutura
 

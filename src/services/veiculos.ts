@@ -1,39 +1,24 @@
 import { veiculosIniciais } from '@/data/veiculos';
-import { gerarSlug } from '@/lib/slug';
-import type { Situacao, Veiculo } from '@/types/veiculo';
+import { supabaseConfig, usaSupabase } from '@/lib/supabaseConfig';
+import type { Veiculo } from '@/types/veiculo';
 
 /**
- * Camada de acesso aos veículos. Para trocar por Supabase (ou outra API), basta
- * reimplementar estas funções mantendo as assinaturas.
+ * Leitura dos veículos para as páginas públicas.
  *
- * Hoje, como no site atual, o painel de demonstração grava as alterações só no
- * localStorage de quem usou o painel; os outros visitantes continuam vendo o arquivo local.
+ * - Com Supabase configurado (.env), busca na tabela `veiculos` com um fetch simples à API
+ *   REST, sem carregar a biblioteca do Supabase no site (ela só entra no painel).
+ *   As regras do banco já escondem os vendidos de quem não é da loja.
+ * - Sem Supabase, usa src/data/veiculos.ts e as alterações do painel de demonstração,
+ *   guardadas no localStorage de quem usou o painel (como no site antigo).
  */
 
-const CHAVE = 'kimika-painel-v5';
-
-function lerSalvos(): Veiculo[] | null {
-  try {
-    const salvo = localStorage.getItem(CHAVE);
-    if (!salvo) return null;
-    const lista: unknown = JSON.parse(salvo);
-    return Array.isArray(lista) && lista.length > 0 ? (lista as Veiculo[]) : null;
-  } catch {
-    return null;
-  }
-}
-
-function salvar(lista: Veiculo[]) {
-  try {
-    localStorage.setItem(CHAVE, JSON.stringify(lista));
-  } catch {
-    // Sem localStorage (modo privado, por exemplo), a alteração vale só até recarregar
-  }
-  memoria = lista;
-  ouvintes.forEach((avisar) => avisar());
-}
+const CHAVE_DEMO = 'kimika-painel-v5';
+const CHAVE_CACHE = 'kimika-cache-veiculos-v1';
+const COLUNAS =
+  'id,slug,marca,modelo,versao,ano,km,preco,cambio,combustivel,carroceria,situacao,importado,cor,fotos,itens';
 
 let memoria: Veiculo[] | null = null;
+let pedido: Promise<Veiculo[]> | null = null;
 const ouvintes = new Set<() => void>();
 
 /** Avisa quando o painel altera os veículos. Devolve a função para cancelar. */
@@ -42,22 +27,76 @@ export function assinarMudancas(avisar: () => void): () => void {
   return () => ouvintes.delete(avisar);
 }
 
+/** Chamado pelo painel depois de qualquer alteração: descarta o que estava em memória. */
+export function avisarMudanca() {
+  memoria = null;
+  pedido = null;
+  ouvintes.forEach((avisar) => avisar());
+}
+
+function lerJson<T>(chave: string): T | null {
+  try {
+    const salvo = localStorage.getItem(chave);
+    return salvo ? (JSON.parse(salvo) as T) : null;
+  } catch {
+    return null;
+  }
+}
+
+function gravarJson(chave: string, valor: unknown) {
+  try {
+    localStorage.setItem(chave, JSON.stringify(valor));
+  } catch {
+    // Sem localStorage (modo privado, por exemplo): segue só em memória
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Modo local (sem Supabase)
+// ---------------------------------------------------------------------------
+
+function lerLocal(): Veiculo[] {
+  const salvos = lerJson<unknown>(CHAVE_DEMO);
+  return Array.isArray(salvos) && salvos.length > 0 ? (salvos as Veiculo[]) : veiculosIniciais;
+}
+
+/** Usado pelo painel de demonstração para gravar a lista inteira. */
+export function gravarLocal(lista: Veiculo[]) {
+  gravarJson(CHAVE_DEMO, lista);
+  avisarMudanca();
+}
+
+// ---------------------------------------------------------------------------
+// Supabase (API REST)
+// ---------------------------------------------------------------------------
+
+async function buscarRemoto(): Promise<Veiculo[]> {
+  const resposta = await fetch(
+    `${supabaseConfig.url}/rest/v1/veiculos?select=${COLUNAS}&order=id.desc`,
+    { headers: { apikey: supabaseConfig.chave } },
+  );
+  if (!resposta.ok) throw new Error(`Supabase respondeu ${resposta.status}`);
+  const lista = (await resposta.json()) as Veiculo[];
+  gravarJson(CHAVE_CACHE, lista);
+  return lista;
+}
+
+// ---------------------------------------------------------------------------
+// API usada pelas páginas
+// ---------------------------------------------------------------------------
+
 export async function listarVeiculos(): Promise<Veiculo[]> {
-  return lerAgora();
-}
+  if (memoria) return memoria;
+  if (!usaSupabase) return (memoria = lerLocal());
 
-function lerAgora(): Veiculo[] {
-  memoria ??= lerSalvos() ?? veiculosIniciais;
-  return memoria;
-}
-
-/**
- * A lista já disponível sem esperar, ou `null`. Com dados locais sempre há lista,
- * o que deixa a primeira pintura completa (sem skeleton nem deslocamento de layout).
- * Numa API remota, esta função deve devolver `null` (ou um cache).
- */
-export function veiculosSemEsperar(): Veiculo[] | null {
-  return lerAgora();
+  pedido ??= buscarRemoto()
+    .catch((erro: unknown) => {
+      // Banco fora do ar ou ainda não configurado: mostra a última lista vista ou o arquivo local
+      console.warn('Não foi possível carregar os veículos do Supabase.', erro);
+      return lerJson<Veiculo[]>(CHAVE_CACHE) ?? veiculosIniciais;
+    })
+    .then((lista) => (memoria = lista));
+  return pedido;
 }
 
 /** Veículos que aparecem na loja (vendidos ficam de fora). */
@@ -71,36 +110,13 @@ export async function obterVeiculoPorSlug(slug: string): Promise<Veiculo | undef
   return todos.find((v) => v.slug === slug);
 }
 
-export async function alterarSituacao(id: number, situacao: Situacao): Promise<void> {
-  const todos = await listarVeiculos();
-  salvar(todos.map((v) => (v.id === id ? { ...v, situacao } : v)));
-}
-
-export async function excluirVeiculo(id: number): Promise<void> {
-  const todos = await listarVeiculos();
-  salvar(todos.filter((v) => v.id !== id));
-}
-
-export type NovoVeiculo = Omit<Veiculo, 'id' | 'slug' | 'situacao' | 'cor' | 'fotos' | 'itens'>;
-
-// Cores da ilustração para veículos sem foto, como no site atual
-const CORES = ['#3B6296', '#9A3B3B', '#4F7A5A', '#7A6A9A'];
-
-export async function adicionarVeiculo(dados: NovoVeiculo): Promise<Veiculo> {
-  const todos = await listarVeiculos();
-  const id = todos.reduce((maior, v) => Math.max(maior, v.id), 0) + 1;
-  const base = gerarSlug(`${dados.marca} ${dados.modelo} ${dados.versao} ${dados.ano}`);
-  const slug = todos.some((v) => v.slug === base) ? `${base}-${id}` : base;
-  const novo: Veiculo = {
-    ...dados,
-    id,
-    slug,
-    situacao: 'Disponível',
-    cor: CORES[id % CORES.length] ?? '#3B6296',
-    // O upload de fotos é ignorado, como no site atual: entra a ilustração
-    fotos: [],
-    itens: [],
-  };
-  salvar([...todos, novo]);
-  return novo;
+/**
+ * A lista já disponível sem esperar, ou `null`. Com dados locais sempre há lista; com o
+ * Supabase, vale o que já veio nesta visita ou a última lista guardada no navegador
+ * (que é atualizada logo em seguida). Assim a primeira pintura vem completa sempre que dá.
+ */
+export function veiculosSemEsperar(): Veiculo[] | null {
+  if (memoria) return memoria;
+  if (!usaSupabase) return (memoria = lerLocal());
+  return lerJson<Veiculo[]>(CHAVE_CACHE);
 }

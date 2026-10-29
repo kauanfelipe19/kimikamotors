@@ -3,21 +3,39 @@ import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import { veiculosIniciais } from './src/data/veiculos';
 
-/** Gera o sitemap.xml no build: páginas fixas + um endereço por veículo à venda. */
-function sitemap(siteUrl: string): Plugin {
+/** Slugs dos veículos à venda: do Supabase, se configurado; senão do arquivo local. */
+async function slugsAVenda(supabaseUrl?: string, chave?: string): Promise<string[]> {
+  if (supabaseUrl && chave) {
+    try {
+      const resposta = await fetch(
+        `${supabaseUrl.replace(/\/$/, '')}/rest/v1/veiculos?select=slug&situacao=neq.Vendido`,
+        { headers: { apikey: chave } },
+      );
+      if (resposta.ok) return ((await resposta.json()) as { slug: string }[]).map((v) => v.slug);
+      console.warn(`sitemap: Supabase respondeu ${resposta.status}; usando o arquivo local`);
+    } catch (erro) {
+      console.warn('sitemap: Supabase indisponível; usando o arquivo local', erro);
+    }
+  }
+  return veiculosIniciais.filter((v) => v.situacao !== 'Vendido').map((v) => v.slug);
+}
+
+/**
+ * Gera o sitemap.xml no build: páginas fixas + um endereço por veículo à venda.
+ * Com o Supabase, veículos cadastrados depois do build entram no próximo deploy.
+ */
+function sitemap(siteUrl: string, supabaseUrl?: string, chave?: string): Plugin {
   return {
     name: 'kimika-sitemap',
     apply: 'build',
-    generateBundle() {
+    async generateBundle() {
       const hoje = new Date().toISOString().slice(0, 10);
       const caminhos = [
         '/',
         '/estoque',
         '/financiamento',
         '/vender',
-        ...veiculosIniciais
-          .filter((v) => v.situacao !== 'Vendido')
-          .map((v) => `/estoque/${v.slug}`),
+        ...(await slugsAVenda(supabaseUrl, chave)).map((s) => `/estoque/${s}`),
       ];
       const urls = caminhos
         .map((c) => `  <url><loc>${new URL(c, siteUrl).href}</loc><lastmod>${hoje}</lastmod></url>`)
@@ -61,7 +79,11 @@ export default defineConfig(({ mode }) => {
   const siteUrl = env.VITE_SITE_URL || 'https://kimikamotors.vercel.app';
 
   return {
-    plugins: [react(), sitemap(siteUrl), preloadFontes()],
+    plugins: [
+      react(),
+      sitemap(siteUrl, env.VITE_SUPABASE_URL, env.VITE_SUPABASE_PUBLISHABLE_KEY),
+      preloadFontes(),
+    ],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

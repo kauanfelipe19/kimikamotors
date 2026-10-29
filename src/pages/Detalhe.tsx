@@ -9,6 +9,7 @@ import { VehiclePhoto } from '@/components/vehicle/VehiclePhoto';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { useVeiculosAVenda } from '@/hooks/useVeiculosAVenda';
 import { formatarKm, formatarPreco } from '@/lib/formatar';
+import { urlFoto } from '@/lib/fotos';
 import { jsonLdVeiculo, serializarJsonLd } from '@/lib/jsonLd';
 import { dadosResumo, ehAntigo, nomeCompleto, nomeCurto } from '@/lib/veiculo';
 import { linkWhatsApp, mensagens } from '@/lib/whatsapp';
@@ -33,7 +34,7 @@ function ConteudoDetalhe({ v }: { v: Veiculo }) {
     titulo,
     descricao: `${[titulo, ...dadosResumo(v).slice(1)].join(', ')}${v.preco ? `, por ${formatarPreco(v.preco)}` : ''}. À venda na Kímika Motors, em Sorocaba, SP. Fale com a loja pelo WhatsApp.`,
     caminho: `/estoque/${v.slug}`,
-    imagem: foto ? `/img/veiculos/${foto.arquivo}-800.webp` : undefined,
+    imagem: foto ? urlFoto(foto, 800) : undefined,
   });
 
   const ficha: [string, string][] = [
