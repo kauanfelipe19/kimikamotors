@@ -74,3 +74,35 @@ Abas, busca, filtros, ordenação, "Remover filtros" (limpa filtros, aba e busca
 - **Ordenar:** fica acima da grade, ao lado do contador, e não junto dos filtros.
 - **Tabela de comparação:** ganhou a foto de cada veículo, com link para o detalhe. No celular a tabela rola de lado com a coluna de rótulos fixa.
 - **Carregamento:** o `Suspense` das páginas fica dentro do layout, para o cabeçalho e o rodapé não piscarem.
+
+## Etapa 3: Detalhe do veículo (28/10/2026)
+
+### Conteúdo mantido
+
+O conteúdo é o mesmo do modal atual:
+
+- Foto, nome, versão e preço (ou "Consulte o valor").
+- Ficha com Ano, Quilometragem, Câmbio, Combustível, Carroceria e Situação; os campos vazios são omitidos.
+- Itens.
+- Botões "Chamar no WhatsApp" e "Quero dar o meu na troca", com as mesmas mensagens.
+- Simulador só quando há preço.
+
+### Simulador
+
+- Componente `Simulador`, que será reaproveitado em `/financiamento`.
+- No detalhe, o preço vem fixo do veículo.
+- Os campos, os padrões (30%, 36x, 1,99% a.m.) e a mensagem do WhatsApp são iguais aos de hoje.
+- A entrada é arredondada como no site atual.
+- O prazo aparece como "36 meses", em vez de só "36".
+
+### Mudanças na página
+
+- **Texto de protótipo removido:** o aviso "Foto do anúncio da loja. No site final entra a galeria completa." saiu. Era nota de protótipo, não funcionalidade. A galeria continua em `docs/sugestoes.md`.
+- **Vendidos:** como saem da loja, o link de um veículo vendido mostra a página "não encontrada" (`noindex`).
+- **Trilha de navegação:** "Início › Estoque › Nome" no topo, que serve de caminho de volta.
+
+### SEO
+
+- **JSON-LD:** `Car`, ou `Motorcycle` para motos, com marca, modelo, ano, km, câmbio, carroceria e condição de usado.
+- **Oferta:** o `Offer` (preço em BRL e loja `AutoDealer` em Sorocaba-SP) só entra quando há preço. Veículo reservado vira `LimitedAvailability`.
+- **Meta:** o título é "Marca Modelo Versão Ano". A descrição é gerada a partir dos dados, a imagem de compartilhamento é a foto do veículo e a página tem `canonical`.

@@ -24,7 +24,7 @@ export interface Simulacao {
 }
 
 export function simular({ valor, entradaPct, prazo, taxaMensal }: Simulacao) {
-  const entrada = (valor * entradaPct) / 100;
+  const entrada = Math.round((valor * entradaPct) / 100);
   const financiado = valor - entrada;
   const parcela = calcularParcela(financiado, taxaMensal / 100, prazo);
   return { entrada, financiado, parcela, total: parcela * prazo + entrada };
